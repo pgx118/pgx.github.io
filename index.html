@@ -43,12 +43,25 @@
 <body>  
   
 <div class="profile">  
-    <img class="profile-image" src="https://pgxing.xyz/img/image_editor_1706283399545.jpg" alt="个人头像">  
+  <div class="profile">  
+    <img class="profile-image" src="https://pgxing.xyz/img/image_editor_1706283399545.jpg" alt="个人头像" onclick="rotateImage(this)">  
+
+</div> 
     <div class="profile-details">  
         <p>邮箱: <a href="mailto:2482470283@qq.com">2482470283@qq.com</a></p>  
         <p>GitHub: <a href="https://pgx118.github.io">pgx118.github.io</a></p>  
     </div>  
 </div>  
-  
+  <script>  
+function rotateImage(image) {  
+
+    image.classList.toggle('rotated');  
+      
+
+    setTimeout(function() {  
+        image.classList.remove('rotated');  
+    }, 500); 
+}  
+</script> 
 </body>  
 </html>
