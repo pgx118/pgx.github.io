@@ -1,0 +1,1012 @@
+   .stop-btn {
+        background-color: var(--error-color) !important;
+    }
+    
+    .stop-btn:hover {
+        background-color: #d32f2f !important;
+    }
+    
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: var(--bg-light);
+    color: var(--text-color);
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+/* 弹窗样式 */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateX(100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 250px;
+}
+
+.toast-success {
+    background-color: var(--success-color) !important;
+}
+
+.toast-error {
+    background-color: var(--error-color) !important;
+}
+
+.toast i {
+    margin-right: 10px;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 15px;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    transform: translateY(-20px);
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--error-color);
+}
+
+.modal-body {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.modal-btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-btn-danger {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.modal-btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.modal-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}
+
+.school-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.school-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform var(--transition-speed);
+}
+
+.school-item:hover {
+    transform: scale(1.05) rotate(5deg);
+}
+
+.school-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
+    background-color: white;
+    padding: 1px;
+    transition: all var(--transition-speed);
+}
+
+.school-item:hover .school-icon {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: rotate(-5deg);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(106, 90, 205, 0.1);
+    animation: slideUp 0.5s ease-out;
+    border: 1px solid rgba(106, 90, 205, 0.1);
+}
+
+/* 标签样式 */
+.tag-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    padding: 10px 20px;
+    border-radius: 25px;
+    background-color: rgba(106, 90, 205, 0.1);
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    border: 1px solid rgba(106, 90, 205, 0.2);
+    font-weight: 500;
+}
+
+.tag:hover {
+    background-color: rgba(106, 90, 205, 0.2);
+    transform: translateY(-2px);
+}
+
+.tag.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.upload-section {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-speed);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.upload-section:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.upload-section h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.file-label:hover {
+    background-color: var(--dark-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.file-label i {
+    margin-right: 8px;
+}
+
+.file-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+#file-name {
+    flex-grow: 1;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    border: 1px dashed rgba(106, 90, 205, 0.3);
+    color: var(--text-color);
+    transition: all var(--transition-speed);
+}
+
+.upload-btn {
+    padding: 12px 25px;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all var(--transition-speed);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    align-self: flex-end;
+}
+
+.upload-btn:hover {
+    background-color: var(--dark-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.file-list {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-speed);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.file-list:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.file-list h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-files {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+th {
+    background-color: rgba(106, 90, 205, 0.05);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+tr {
+    transition: all var(--transition-speed);
+}
+
+tr:hover {
+    background-color: rgba(106, 90, 205, 0.03);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.download-btn, .delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+.download-btn {
+    background-color: var(--success-color);
+}
+
+.delete-btn {
+    background-color: var(--error-color);
+}
+
+.download-btn:hover, .delete-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 管理员面板样式 */
+.admin-panel {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-speed);
+    animation: fadeIn 0.5s ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin-panel:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.admin-panel h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(106, 90, 205, 0.2);
+    border-radius: 8px;
+    color: var(--text-color);
+    transition: all var(--transition-speed);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.3);
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-speed);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 登录按钮样式 */
+.login-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
+}
+
+.login-btn:hover {
+    background-color: var(--dark-color);
+    transform: translateY(-2px);
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .tag-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .file-input-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .upload-btn {
+        align-self: stretch;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
+}.progress-container {
+    width: 100%;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    margin: 15px 0;
+    display: none;
+}
+
+.progress-bar {
+    height: 20px;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    width: 0%;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.progress-text {
+    margin-top: 5px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--primary-color);
+}/* 上传按钮容器 */
+.upload-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* 继续上传按钮 */
+.resume-btn {
+    background-color: var(--success-color) !important;
+}
+
+.resume-btn:hover {
+    background-color: #388e3c !important;
+}
+
+/* 上传新文件按钮 */
+.new-upload-btn {
+    background-color: var(--secondary-color) !important;
+}
+
+.new-upload-btn:hover {
+    background-color: var(--dark-color) !important;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.page-link {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: rgba(106, 90, 205, 0.1);
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all var(--transition-speed);
+    border: 1px solid rgba(106, 90, 205, 0.2);
+    font-weight: 500;
+}
+
+.page-link:hover {
+    background-color: rgba(106, 90, 205, 0.2);
+    transform: translateY(-2px);
+}
+
+.page-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    cursor: default;
+}
+
+.page-link i {
+    margin: 0 5px;
+}.announcement-banner {
+    padding: 15px 25px;
+    margin: 0 auto 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+}
+
+.announcement-banner.info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left: 5px solid var(--info-color);
+    color: var(--info-color);
+}
+
+.announcement-banner.success {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-left: 5px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.announcement-banner.warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-left: 5px solid var(--warning-color);
+    color: var(--warning-color);
+}
+
+.announcement-banner.error {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left: 5px solid var(--error-color);
+    color: var(--error-color);
+}
+
+.announcement-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.announcement-content h3 {
+    margin-bottom: 10px;
+}
+/* 为所有 Font Awesome 下载图标设置本地图片 */
+.fa-download::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('tp/download.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 隐藏原来的 Font Awesome 图标 */
+.fa-download {
+    font-family: inherit !important;
+}
+.fa-folder-open::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/file.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* 完全自适应父容器大小 */
+    width: 100%;
+    height: 100%;
+}
+
+.fa-folder-open {
+    font-family: inherit !important;
+    /* 设置一个基准大小，实际使用时可以覆盖 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+.fa-file-word::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/word.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file-word {
+    font-family: inherit !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+
+.fa-sign-in-alt::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/gly.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 100%;
+    height: 100%;
+}
+.fa-sign-in-alt {
+    font-family: inherit !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+
+
+.fa-file::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/qt.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file {
+    font-family: inherit !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+
+.fa-file-powerpoint::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/ppt.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file-powerpoint {
+    font-family: inherit !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+.fa-file-excel::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/excel.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file-excel {
+    font-family: inherit !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+
+.fa-file-pdf::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/pdf.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file-pdf {
+    font-family: inherit !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+
+.fa-file-archive::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/ysb.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file-archive {
+    font-family: inherit !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+.fa-file::before {
+    content: "";
+    display: inline-block;
+    background-image: url('tp/qt.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+}
+
+.fa-file {
+    font-family: inherit !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+}
+
+    #previewModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            overflow: auto;
+        }
+        
+        #previewContent {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        #previewClose {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        #previewTitle {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        #previewContainer {
+            width: 100%;
+            min-height: 500px;
+            border: 1px solid #eee;
+            padding: 15px;
+        }
+        
+        .preview-loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }/* 文件列表中的链接样式 */
+.file-list table td a {
+    color: #000000; /* 黑色字体 */
+    text-decoration: none; /* 默认无下划线 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
+}
+
+/* 鼠标悬停时显示下划线 */
+.file-list table td a:hover {
+    color: #000000; /* 保持黑色 */
+    text-decoration: underline; /* 悬停时显示下划线 */
+    text-decoration-thickness: 1px; /* 下划线粗细 */
+    text-underline-offset: 3px; /* 下划线偏移量，可选 */
+}
+
+/* 其他状态保持无下划线 */
+.file-list table td a:visited,
+.file-list table td a:focus,
+.file-list table td a:active {
+    color: #000000;
+    text-decoration: none;
+}
+
+

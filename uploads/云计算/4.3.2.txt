@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>用户信息</title>
+</head>
+
+<body>
+<p>用户信息
+</p>
+<a href="4.3.1.php">添加用户</a>
+<table width="50%" border="1">
+  <tbody>
+    <tr align="center">
+      <td>编号</td>
+      <td>姓名</td>
+      <td>性别</td>
+      <td>账号</td>
+      <td>密码</td>
+    </tr>
+    <?php
+
+$link=mysqli_connect('localhost','root','root','mydb')  or exit('慓据库连接失败');//连接慓据库
+mysqli_set_charset($link,'utf8');//设置编慜，防止乱慜
+$result=mysqli_query($link,'select * from student');//执行sql语句
+while($row=mysqli_fetch_assoc($result))//遍历查询慙果
+{
+
+?>
+
+<tr>
+    <td><?php
+    echo  $row['id'] ?></td>
+    <td><?php
+    echo  $row['realname'] ?></td>
+    <td><?php
+    echo  $row['sex'] ?></td>
+    <td><?php
+    echo  $row['id'] ?></td>
+     <td><?php
+    echo  $row['password'] ?></td>
+</tr>
+
+<?php 
+
+}
+
+
+
+?>
+  </tbody>
+</table>
+<?php
+$result=mysqli_query($link,'select count(*) from student');//执行sql语句
+$row = mysqli_fetch_assoc($result);
+$zrs = $row['count(*)'];
+mysqli_close($link);
+?>
+<p>总人数：<?php echo $zrs?></p>
+</body>
+</html>

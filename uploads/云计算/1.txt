@@ -1,0 +1,11 @@
+开发者认证专区
+https://edu.aliyun.com/certification/?spm=5176.support-home.J_9205432260.4.5361156fbwMFAF
+
+开发者训练营：自学营
+https://edu.aliyun.com/trainingcamp/?spm=a2cwt.28196072.0.0.20d85542qUVstX
+
+ECS云服务器新手上路
+https://developer.aliyun.com/adc/scenario/410e5b6a852f4b4b88bf74bf4c197a57?spm=a2c6h.13858403.0.0.2f156ce0mWavim
+
+ECS搭建云上博客
+https://developer.aliyun.com/adc/scenario/fdecd528be6145dcbe747f0206e361f3?spm=a2c6h.13858403.0.0.2f156ce0mWavim
