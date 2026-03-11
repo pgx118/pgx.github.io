@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>桂工本地网盘</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="libs/jszip.min.js"></script>
+    <script src="libs/docx-preview.min.js"></script>
+    <script src="libs/xlsx.full.min.js"></script>
+    <script src="libs/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+        window.docx = window.docx || docx;
+    </script>
+    <link rel="icon" type="image/png" href="img/tb.jpg">
+    <style>
+        /* 原有的 CSS 样式保持不变 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: rgba(242, 242, 245, 0.99);
+            color: #333;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .school-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .school-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .school-item:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .school-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            object-fit: contain;
+            background-color: white;
+            padding: 1px;
+            transition: all 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(106, 90, 205, 0.1);
+            animation: slideUp 0.5s ease-out;
+            border: 1px solid rgba(106, 90, 205, 0.1);
+            height: 800px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 标签样式 */
+        .tag-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: rgba(106, 90, 205, 0.1);
+            color: #6a5acd;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(106, 90, 205, 0.2);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background-color: rgba(106, 90, 205, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tag.active {
+            background-color: #6a5acd;
+            color: white;
+            border-color: #6a5acd;
+        }
+
+        /* 文件列表样式 */
+        .file-list {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 70px;
+        }
+
+        .file-list h2 {
+            margin-bottom: 20px;
+            color: #6a5acd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .no-files {
+            text-align: center;
+            color: rgba(0, 0, 0, 0.5);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background-color: rgba(106, 90, 205, 0.05);
+            color: #6a5acd;
+            font-weight: 500;
+        }
+
+        tr {
+            transition: all 0.3s;
+        }
+
+        tr:hover {
+            background-color: rgba(106, 90, 205, 0.03);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .page-link {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: rgba(106, 90, 205, 0.1);
+            color: #6a5acd;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(106, 90, 205, 0.2);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .page-link:hover {
+            background-color: rgba(106, 90, 205, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .page-link.active {
+            background-color: #6a5acd;
+            color: white;
+            border-color: #6a5acd;
+            cursor: default;
+        }
+
+        /* 搜索框样式 */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-form {
+            width: 50%;
+            max-width: 500px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 50px 12px 20px;
+            border: 2px solid #6a5acd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .search-input:focus {
+            border-color: #9370db;
+            box-shadow: 0 0 10px rgba(106, 90, 205, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #6a5acd;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.3s;
+        }
+
+        .search-btn:hover {
+            color: #483d8b;
+        }
+
+        .cancel-search-btn {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.3s;
+        }
+
+        .cancel-search-btn:hover {
+            color: #f44336;
+        }
+
+        /* 弹窗样式 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateX(100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 250px;
+        }
+
+        .toast-success {
+            background-color: #4CAF50 !important;
+        }
+
+        .toast-error {
+            background-color: #f44336 !important;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 文件图标样式 */
+        .fa-download::before {
+            content: "↓";
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .fa-folder-open::before {
+            content: "📁";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-word::before {
+            content: "📄";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-excel::before {
+            content: "📊";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-pdf::before {
+            content: "📕";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-archive::before {
+            content: "📦";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file::before {
+            content: "📄";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-image::before {
+            content: "🖼️";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-audio::before {
+            content: "🎵";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-video::before {
+            content: "🎬";
+            font-family: Arial, sans-serif;
+        }
+
+        .fa-file-code::before {
+            content: "📝";
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="school-container">
+        <a href="https://103.38.81.5/gllg/" style="text-decoration: none;">
+            <div class="school-item">
+                <img src="img/tb.jpg" alt="柳橙汁LCVC" class="school-icon">
+            </div>
+        </a>
+        <a href="https://103.38.81.5/glgl/" style="text-decoration: none;">
+            <div class="school-item">
+                <img src="https://p1.ssl.qhimg.com/dr/220__/t015f5f2f2488c2b17e.jpg" alt="桂工网盘" class="school-icon">
+            </div>
+        </a>
+    </div>
+
+    <div class="container">
+        <!-- 标签导航 -->
+        <div class="tag-container" id="tagContainer"></div>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); performSearch();">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" placeholder="搜索所有文件夹中的文件..." class="search-input">
+                    <button type="submit" class="search-btn" title="搜索">🔍</button>
+                    <button type="button" id="cancelSearch" class="cancel-search-btn" title="取消搜索" style="display: none;" onclick="cancelSearch()">✕</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="file-list">
+            <h2 id="currentFolderTitle"><i class="fas fa-folder-open"></i> 文档 文件列表</h2>
+            <div id="fileTableContainer">
+                <!-- 文件列表将通过JavaScript动态加载 -->
+                <div class="no-files">正在加载文件列表...</div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentTag = '文档'; // 默认标签
+        let currentPage = 1;
+        let totalPages = 1;
+        let filesPerPage = 20;
+        let allFiles = [];
+        let allowedTags = ['文档', '图片', '视频', '音乐', '其他']; // 默认标签
+        let searchKeyword = '';
+
+        // DOM 加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载标签
+            loadTags();
+            
+            // 加载文件列表
+            loadFileList();
+            
+            // 设置搜索表单提交事件
+            document.getElementById('searchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                performSearch();
+            });
+        });
+
+        // 加载标签
+        function loadTags() {
+            const tagContainer = document.getElementById('tagContainer');
+            let html = '';
+            
+            allowedTags.forEach(tag => {
+                const activeClass = tag === currentTag ? 'active' : '';
+                html += `<a class="tag ${activeClass}" onclick="switchTag('${tag}')">${tag}</a>`;
+            });
+            
+            tagContainer.innerHTML = html;
+        }
+
+        // 切换标签
+        function switchTag(tag) {
+            currentTag = tag;
+            currentPage = 1;
+            searchKeyword = '';
+            
+            // 更新活动标签样式
+            document.querySelectorAll('.tag').forEach(t => {
+                if (t.textContent === tag) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+            
+            // 隐藏取消搜索按钮
+            document.getElementById('cancelSearch').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+            
+            // 更新标题
+            document.getElementById('currentFolderTitle').innerHTML = `<i class="fas fa-folder-open"></i> ${tag} 文件列表`;
+            
+            // 加载文件列表
+            loadFileList();
+        }
+
+        // 加载文件列表
+        function loadFileList() {
+            if (searchKeyword) {
+                performSearch();
+                return;
+            }
+            
+            // 构建文件路径
+            const folderPath = `uploads/${currentTag}/`;
+            
+            // 使用 fetch 获取文件列表（这里需要一个服务器端脚本来返回文件列表）
+            // 由于是纯 HTML，我们需要一个简单的 PHP 文件来返回 JSON 格式的文件列表
+            fetch(`get_files.php?tag=${encodeURIComponent(currentTag)}`)
+                .then(response => response.json())
+                .then(files => {
+                    allFiles = files;
+                    renderFileList();
+                })
+                .catch(error => {
+                    console.error('加载文件列表失败:', error);
+                    document.getElementById('fileTableContainer').innerHTML = '<div class="no-files">加载文件列表失败</div>';
+                });
+        }
+
+        // 渲染文件列表
+        function renderFileList() {
+            const startIndex = (currentPage - 1) * filesPerPage;
+            const endIndex = Math.min(startIndex + filesPerPage, allFiles.length);
+            const currentFiles = allFiles.slice(startIndex, endIndex);
+            
+            totalPages = Math.ceil(allFiles.length / filesPerPage);
+            
+            let html = '';
+            
+            if (allFiles.length === 0) {
+                html = '<div class="no-files">该文件夹暂无文件</div>';
+            } else {
+                html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>文件名</th>
+                                <th>大小</th>
+                                <th>修改时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                currentFiles.forEach(file => {
+                    const iconClass = getFileIcon(file.name);
+                    const fileSize = formatFileSize(file.size);
+                    const modTime = new Date(file.mod_time * 1000).toLocaleString();
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <i class="${iconClass}"></i>
+                                <a href="uploads/${currentTag}/${encodeURIComponent(file.name)}" download style="color: #333; text-decoration: none; margin-left: 8px;">
+                                    ${file.name}
+                                </a>
+                            </td>
+                            <td>${fileSize}</td>
+                            <td>${modTime}</td>
+                            <td>
+                                <a href="uploads/${currentTag}/${encodeURIComponent(file.name)}" download class="download-btn" title="下载">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                `;
+            }
+            
+            document.getElementById('fileTableContainer').innerHTML = html;
+            renderPagination();
+        }
+
+        // 渲染分页
+        function renderPagination() {
+            if (totalPages <= 1) {
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // 上一页
+            if (currentPage > 1) {
+                html += `<a class="page-link" onclick="changePage(${currentPage - 1})">«</a>`;
+            }
+            
+            // 页码
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<span class="page-link active">${i}</span>`;
+                } else {
+                    html += `<a class="page-link" onclick="changePage(${i})">${i}</a>`;
+                }
+            }
+            
+            // 下一页
+            if (currentPage < totalPages) {
+                html += `<a class="page-link" onclick="changePage(${currentPage + 1})">»</a>`;
+            }
+            
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        // 切换页码
+        function changePage(page) {
+            currentPage = page;
+            renderFileList();
+        }
+
+        // 执行搜索
+        function performSearch() {
+            const input = document.getElementById('searchInput');
+            searchKeyword = input.value.trim();
+            
+            if (!searchKeyword) {
+                cancelSearch();
+                return;
+            }
+            
+            // 显示取消按钮
+            document.getElementById('cancelSearch').style.display = 'block';
+            
+            // 更新标题
+            document.getElementById('currentFolderTitle').innerHTML = `<i class="fas fa-folder-open"></i> 搜索结果: "${searchKeyword}"`;
+            
+            // 执行搜索（需要服务器端支持）
+            fetch(`search.php?search=${encodeURIComponent(searchKeyword)}`)
+                .then(response => response.json())
+                .then(results => {
+                    allFiles = results;
+                    currentPage = 1;
+                    renderFileList();
+                })
+                .catch(error => {
+                    console.error('搜索失败:', error);
+                    showToast('搜索失败', 'error');
+                });
+        }
+
+        // 取消搜索
+        function cancelSearch() {
+            searchKeyword = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('cancelSearch').style.display = 'none';
+            
+            // 恢复标题
+            document.getElementById('currentFolderTitle').innerHTML = `<i class="fas fa-folder-open"></i> ${currentTag} 文件列表`;
+            
+            // 重新加载文件列表
+            loadFileList();
+        }
+
+        // 获取文件图标
+        function getFileIcon(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            
+            const iconMap = {
+                // 文档
+                'pdf': 'fas fa-file-pdf',
+                'doc': 'fas fa-file-word',
+                'docx': 'fas fa-file-word',
+                'txt': 'fas fa-file-alt',
+                'rtf': 'fas fa-file-alt',
+                
+                // 表格
+                'xls': 'fas fa-file-excel',
+                'xlsx': 'fas fa-file-excel',
+                'csv': 'fas fa-file-csv',
+                
+                // 演示文稿
+                'ppt': 'fas fa-file-powerpoint',
+                'pptx': 'fas fa-file-powerpoint',
+                
+                // 图片
+                'jpg': 'fas fa-file-image',
+                'jpeg': 'fas fa-file-image',
+                'png': 'fas fa-file-image',
+                'gif': 'fas fa-file-image',
+                'bmp': 'fas fa-file-image',
+                'svg': 'fas fa-file-image',
+                'webp': 'fas fa-file-image',
+                
+                // 音频
+                'mp3': 'fas fa-file-audio',
+                'wav': 'fas fa-file-audio',
+                'ogg': 'fas fa-file-audio',
+                
+                // 视频
+                'mp4': 'fas fa-file-video',
+                'avi': 'fas fa-file-video',
+                'mov': 'fas fa-file-video',
+                'wmv': 'fas fa-file-video',
+                'mkv': 'fas fa-file-video',
+                
+                // 压缩文件
+                'zip': 'fas fa-file-archive',
+                'rar': 'fas fa-file-archive',
+                '7z': 'fas fa-file-archive',
+                'tar': 'fas fa-file-archive',
+                'gz': 'fas fa-file-archive',
+                
+                // 代码文件
+                'html': 'fas fa-file-code',
+                'htm': 'fas fa-file-code',
+                'css': 'fas fa-file-code',
+                'js': 'fas fa-file-code',
+                'php': 'fas fa-file-code',
+                'json': 'fas fa-file-code',
+                'xml': 'fas fa-file-code',
+            };
+            
+            return iconMap[extension] || 'fas fa-file';
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes >= 1073741824) {
+                return (bytes / 1073741824).toFixed(2) + ' GB';
+            } else if (bytes >= 1048576) {
+                return (bytes / 1048576).toFixed(2) + ' MB';
+            } else if (bytes >= 1024) {
+                return (bytes / 1024).toFixed(2) + ' KB';
+            } else if (bytes > 1) {
+                return bytes + ' bytes';
+            } else if (bytes == 1) {
+                return '1 byte';
+            } else {
+                return '0 bytes';
+            }
+        }
+
+        // 显示提示信息
+        function showToast(message, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icon = type === 'success' ? '✓' : '✕';
+            toast.innerHTML = `
+                <div>
+                    <span style="margin-right: 8px;">${icon}</span>
+                    ${message}
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
