@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器状态检测</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            color: #667eea;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card.disk {
+            border-left-color: #48bb78;
+        }
+        
+        .card.files {
+            border-left-color: #4299e1;
+        }
+        
+        .card.server {
+            border-left-color: #9f7aea;
+        }
+        
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stat {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .stat:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .raw-data {
+            background: #1a202c;
+            color: #cbd5e0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f56565;
+        }
+        
+        .success {
+            background: #c6f6d5;
+            color: #2f855a;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #48bb78;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <i class="fas fa-server"></i>
+            服务器状态检测
+        </h1>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="loadAllData()">
+                <i class="fas fa-sync"></i>刷新所有数据
+            </button>
+            <button class="btn btn-secondary" onclick="loadDiskInfo()">
+                <i class="fas fa-hdd"></i>仅刷新磁盘信息
+            </button>
+            <button class="btn btn-secondary" onclick="loadFileInfo()">
+                <i class="fas fa-file"></i>仅刷新文件信息
+            </button>
+        </div>
+        
+        <div id="statusContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                正在加载服务器状态...
+            </div>
+        </div>
+        
+        <div class="raw-data">
+            <h3>原始JSON数据：</h3>
+            <pre id="rawData">等待数据加载...</pre>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // 加载所有数据
+        function loadAllData() {
+            fetchData('all');
+        }
+        
+        // 加载磁盘信息
+        function loadDiskInfo() {
+            fetchData('disk');
+        }
+        
+        // 加载文件信息
+        function loadFileInfo() {
+            fetchData('files');
+        }
+        
+        // 获取数据
+        function fetchData(action = 'all') {
+            const statusContainer = document.getElementById('statusContainer');
+            statusContainer.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    正在加载数据...
+                </div>
+            `;
+            
+            fetch(`server_status.php?action=${action}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 显示原始数据
+                    document.getElementById('rawData').textContent = JSON.stringify(data, null, 2);
+                    
+                    if (data.success) {
+                        renderData(data, action);
+                    } else {
+                        showError(data);
+                    }
+                })
+                .catch(error => {
+                    statusContainer.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            请求失败: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+        
+        // 渲染数据
+        function renderData(data, action) {
+            let html = '';
+            
+            if (action === 'all' || action === 'disk') {
+                html += `
+                    <div class="status-cards">
+                        <div class="card disk">
+                            <h3><i class="fas fa-hdd"></i> 磁盘信息</h3>
+                            <div class="stat">
+                                <div class="stat-label">总空间</div>
+                                <div class="stat-value">${data.disk.total_formatted}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">已使用</div>
+                                <div class="stat-value">${data.disk.used_formatted}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">可用空间</div>
+                                <div class="stat-value">${data.disk.free_formatted}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">使用率</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${data.disk.usage_percent}%">
+                                        ${data.disk.usage_percent}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `;
+            }
+            
+            if (action === 'all' || action === 'files') {
+                html += `
+                        <div class="card files">
+                            <h3><i class="fas fa-folder"></i> 文件信息</h3>
+                            <div class="stat">
+                                <div class="stat-label">文件夹数量</div>
+                                <div class="stat-value">${data.files.folders} 个</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">文件总数</div>
+                                <div class="stat-value">${data.files.count.toLocaleString()} 个</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">总文件大小</div>
+                                <div class="stat-value">${data.files.total_size_formatted}</div>
+                            </div>
+                        </div>
+                `;
+            }
+            
+            if (action === 'all') {
+                html += `
+                        <div class="card server">
+                            <h3><i class="fas fa-cog"></i> 服务器信息</h3>
+                            <div class="stat">
+                                <div class="stat-label">PHP版本</div>
+                                <div class="stat-value">${data.server.php_version}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">服务器软件</div>
+                                <div class="stat-value">${data.server.server_software}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">最大上传限制</div>
+                                <div class="stat-value">${data.server.upload_max_filesize}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">POST最大限制</div>
+                                <div class="stat-value">${data.server.post_max_size}</div>
+                            </div>
+                        </div>
+                `;
+            }
+            
+            html += `</div>`;
+            html += `<div class="success"><i class="fas fa-check-circle"></i> 数据更新时间: ${data.timestamp}</div>`;
+            
+            document.getElementById('statusContainer').innerHTML = html;
+        }
+        
+        // 显示错误
+        function showError(data) {
+            let errorHtml = '<div class="error"><i class="fas fa-exclamation-triangle"></i> 获取数据失败</div>';
+            
+            if (data.errors) {
+                for (const [key, error] of Object.entries(data.errors)) {
+                    if (error) {
+                        errorHtml += `<div class="error">${key}: ${error}</div>`;
+                    }
+                }
+            } else if (data.error) {
+                errorHtml += `<div class="error">${data.error}</div>`;
+            }
+            
+            document.getElementById('statusContainer').innerHTML = errorHtml;
+        }
+        
+        // 页面加载时自动获取数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+        });
+    </script>
+</body>
+</html>

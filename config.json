@@ -1,0 +1,41 @@
+{
+    "security": {
+        "login_attempts": 5,
+        "session_timeout": 301,
+        "ip_restriction": "none",
+        "allowed_file_types": "jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar",
+        "enable_2fa": false
+    },
+    "performance": {
+        "cache_enabled": null,
+        "cache_lifetime": 0,
+        "max_upload_size": 0,
+        "concurrent_uploads": 0,
+        "enable_gzip": false
+    },
+    "storage": {
+        "storage_type": null,
+        "storage_path": null,
+        "storage_quota": 0,
+        "auto_cleanup": false,
+        "cleanup_days": 0,
+        "folder_limits": {
+            "123": 123
+        }
+    },
+    "maintenance": {
+        "maintenance_mode": null,
+        "maintenance_message": null,
+        "backup_schedule": null,
+        "backup_location": null,
+        "enable_logging": false
+    },
+    "announcement": "<br \/>\r\n<b>Warning<\/b>:  htmlspecialchars() expects parameter 1 to be string, array given in <b>\/pgxx.xyz\/gllg\/admin.php<\/b> on line <b>699<\/b><br \/>",
+    "upload_limits": {
+        "daily_limit": 0,
+        "per_user_limit": 0,
+        "reset_time": "00:00",
+        "enabled": false
+    },
+    "user_quotas": []
+}
